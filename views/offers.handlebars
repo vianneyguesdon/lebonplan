@@ -1,0 +1,14 @@
+<div class="container">
+    <div class="row justify-content-center">
+        {{#each newOffers}}
+        <div class="card m-3" style="width: 18rem;">
+            <h4 class="card-header">{{this.price}}€</h4>
+            <img src="{{this.firstImage}}" class="card-img-top" alt="...">
+            <div class="card-body">
+                <h4 class="card-title">{{this.title}}</h4>
+                <a href="/offers/{{this.id}}" class="btn btn-secondary">En savoir plus</a>
+            </div>
+        </div>
+        {{/each}}
+    </div>
+</div>

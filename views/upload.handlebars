@@ -1,0 +1,42 @@
+<div class="container">
+    <div class="row">
+        <div class="col-6 offset-3 py-5">
+            <h3>Créer une nouvelle annonce</h3>
+            <form enctype="multipart/form-data" action="/upload" method="POST">
+            <div class="input-group my-1">
+                <div class="input-group-prepend">
+                <span class="input-group-text" id="basic-addon1"><i class="fas fa-futbol"></i></span>
+                </div>
+                <input type="text" placeholder="What do you sell ?" name="title" class="form-control"/>
+            </div>
+            <div class="input-group my-1">
+                <div class="input-group-prepend">
+                <span class="input-group-text" id="basic-addon1"><i class="far fa-id-card"></i></span>
+                </div>
+                <input type="text" placeholder="Description" name="description" class="form-control"/>
+            </div>
+            <div class="input-group my-1">
+                <div class="input-group-prepend">
+                <span class="input-group-text" id="basic-addon1"><i class="fas fa-city"></i></span>
+                </div>
+                <input type="text" placeholder="City" name="city" class="form-control"/>
+            </div>
+            <div class="input-group my-1">
+                <div class="input-group-prepend">
+                <span class="input-group-text" id="basic-addon1"><i class="fas fa-euro-sign"></i></span>
+                </div>
+                <input type="text" placeholder="Mon prix" name="price" class="form-control"/>
+            </div>
+            <input type="file" name="image" />
+            <hr/>
+            <div class="input-group my-1">
+                <input type="text" placeholder="Your Name" name="firstName" class="form-control"/>
+            </div>
+            <div>
+                
+                <button class="btn btn-primary" type="submit">Poster mon annonce</button>
+            </div>
+            </form>
+        </div>
+    </div>
+</div>
