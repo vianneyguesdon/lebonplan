@@ -12,12 +12,21 @@ var OfferModel = require('./models').Offer;
 var fs = require('fs');
 var multer = require('multer');
 var upload = multer({ dest: 'public/uploads/' });
+var expValChecker = require("express-validator/check");
 
 var port = process.env.PORT || 3000;
 
 var app = express();
 
 app.use(express.static("public"));
+
+// Optimisation des routes en externe
+var citiesRoute = require("./routes/cities");
+app.use("/citites", citiesRoute);
+
+// Initialisation express-vaidator
+var check = expValChecker.check; // get references to the 2 validation functions
+var validationResult = expValChecker.validationResult;
 
 // Connexion à la base de données
 mongoose.connect(
@@ -38,36 +47,9 @@ app.get('/', function(req, res) {
     res.render("home");
 });
 
-app.get('/cities/:city', function(req, res) {
-    var city = req.params.city
-    console.log(city);
-
-    OfferModel.find({ city: city }, function(err, offers) {
-        if (err !== null) {
-            console.log("erreur", err);
-        } else {
-            console.log(offers)
-                // Map est une boucle qui parcours l'objet offers. On écrit newPluriel = pluriel.map(function(singulier))
-            var newOffers = offers.map(function(offer) {
-                return {
-                    price: offer.price,
-                    description: offer.description,
-                    firstImage: offer.images[0],
-                    title: offer.title,
-                    id: offer.id
-                };
-            });
-            // console.log(newOffers);
-            res.render("offers", {
-                newOffers: newOffers
-            });
-        };
-    });
-});
-
 app.get('/offers/:id', function(req, res) {
     var id = req.params.id;
-    console.log(id);
+    // console.log(id);
 
     // OfferModel.findOne({ id: id }, function(err, offer) {
     //     if (err !== null) {
@@ -87,11 +69,11 @@ app.get('/offers/:id', function(req, res) {
         .findOne({ id: id })
         .populate('user') // Ici, on note la clef qui fait le lien entre les 2 collections
         .exec(function(err, offer) {
-            console.log(offer);
-            console.log('The creator is', offer.user.firstName);
-            console.log('The family name', offer.user.surname);
-            console.log('Mon moto : ', offer.user.description);
-            console.log('Ma photo : ', offer.user.thumbnail);
+            // console.log(offer);
+            // console.log('The creator is', offer.user.firstName);
+            // console.log('The family name', offer.user.surname);
+            // console.log('Mon moto : ', offer.user.description);
+            // console.log('Ma photo : ', offer.user.thumbnail);
 
             res.render('offer', {
                 // displayedOffer: displayedOffer,
@@ -128,9 +110,9 @@ app.get("/", function(req, res) {
 
 app.get("/admin", function(req, res) {
     if (req.isAuthenticated()) {
-        console.log('req.user', req.user);
+        // console.log('req.user', req.user);
         var welcomeUser = req.user.firstName
-        console.log('welcomeUser : ', welcomeUser)
+            // console.log('welcomeUser : ', welcomeUser)
         res.render("admin", {
             welcomeUser: welcomeUser
         });
@@ -147,7 +129,19 @@ app.get("/signup", function(req, res) {
     }
 });
 
-app.post("/signup", function(req, res) {
+app.post('/signup',
+    //Check validator username + password
+    check("username").isEmail(), 
+    check("password").isLength({ min: 6 }), 
+    function(req, res) {
+        var errors = validationResult(req); 
+        if (errors.isEmpty() === false) {
+            // console.log(errors.array()[0].msg)
+            res.render('signup',{
+                errors: errors.array()[0].msg // to be used in a json loop
+            });
+            return;
+        }
     // create a user with the defined model with
     // req.body.username, req.body.password
 
@@ -182,17 +176,17 @@ app.post("/signup", function(req, res) {
     var firstName = req.body.firstName;
     var surName = req.body.surName;
     var dateOfBirth = req.body.dateOfBirth;
-    console.log('username :', username)
-    console.log('password :', password)
-    console.log('passwordConf:', passwordConf)
-    console.log('firstName :', firstName)
-    console.log('surName :', surName)
-    console.log('dateOfBirth :', dateOfBirth)
+    // console.log('username :', username)
+    // console.log('password :', password)
+    // console.log('passwordConf:', passwordConf)
+    // console.log('firstName :', firstName)
+    // console.log('surName :', surName)
+    // console.log('dateOfBirth :', dateOfBirth)
 
     if (password === passwordConf) {
-        console.log("OK. Passwords match !")
+        // console.log("OK. Passwords match !")
     } else {
-        console.log("Nope ! Passwords don't match !")
+        // console.log("Nope ! Passwords don't match !")
     }
 
     User.register(
@@ -226,13 +220,10 @@ app.get("/login", function(req, res) {
     }
 });
 
-app.post(
-    "/login",
-    passport.authenticate("local", {
-        successRedirect: "/admin",
-        failureRedirect: "/login"
-    })
-);
+app.post("/login", passport.authenticate("local", {
+    successRedirect: "/admin",
+    failureRedirect: "/login"
+}));
 
 // Without Passport
 
@@ -262,14 +253,14 @@ app.get("/upload", function(req, res) {
 });
 
 app.post('/upload', upload.single('image'), function(req, res) {
-    console.log(req.file);
-    console.log(req.body.username);
-    console.log(req.body.firstName);
-    console.log(req.body.surName);
+    // console.log(req.file);
+    // console.log(req.body.username);
+    // console.log(req.body.firstName);
+    // console.log(req.body.surName);
 
     // On rename la photo dans le upload
-    var pictureName = "public/uploads/" + req.body.username + ".jpg";
-    console.log(pictureName)
+    var pictureName = "public/uploads/" + req.body.firstName + ".jpg";
+    // console.log('public-picture', pictureName)
     fs.rename(req.file.path, pictureName, function(err) {
         if (err) {
             console.log("il y a une erreur", err)
@@ -280,7 +271,7 @@ app.post('/upload', upload.single('image'), function(req, res) {
             city: req.body.city,
             firstName: req.body.firstName,
             price: req.body.price,
-            images: "/uploads/" + req.body.username + ".jpg",
+            images: "/uploads/" + req.body._id + ".jpg",
         });
 
         // Save the user in the database
@@ -288,8 +279,10 @@ app.post('/upload', upload.single('image'), function(req, res) {
             if (err) {
                 res.send("Il y a eu une erreur, veuillez recommencer")
             }
-            var successMess = newOffer.firstName + " , your offer has been saved !";
-            res.render("offer-posted");
+            var successMess = req.body.firstName + " , your offer has been saved !";
+            res.render("offer-posted", {
+                successMess: successMess
+            });
         });
     });
 });

@@ -3,6 +3,11 @@
   <div class="row justify-content-center">
     <div class="col-lg-4 col-md-6 col-sm-12">
       <h3 class="mt-4">Créez un compte en quelques instants !</h3>
+      {{#if errors}}
+      <div class="alert alert-danger" role="alert">
+        {{errors}}
+      </div>
+      {{/if}}
       <form action="/signup" method="POST">
         <div class="input-group my-1">
           <div class="input-group-prepend">

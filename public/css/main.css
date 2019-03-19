@@ -1,10 +1,10 @@
 .navbar {
-    background-color: #839788;
+    background-color: #5bb672;
 }
 
 body {
     font-family: "Quicksand";
-    background-color: #EEE0CB;
+    background-color: rgb(235, 230, 224)
 }
 
 img {
@@ -28,7 +28,7 @@ img {
 }
 
 #search {
-    width: 500px;
+    width: 450px;
     margin-left: -170px;
     height: 35px;
 }
@@ -51,7 +51,19 @@ h5 {
 }
 
 .card {
-    background-color: #F1F7ED;
+    background-color: rgb(255, 255, 255);
+}
+
+.offer-posted {
+    margin-top: 100px;
+}
+
+.img-small {
+    height: 30px;
+}
+
+.img-offer-posted {
+    margin-bottom: 60px;
 }
 
 
@@ -84,7 +96,7 @@ input[type="color"]:focus,
 */
 
 .footer {
-    background-color: #839788;
+    background-color: #5bb672;
 }
 
 i {
