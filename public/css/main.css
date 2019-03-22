@@ -1,5 +1,5 @@
 .navbar {
-    background-color: #5bb672;
+    background-color: #60b174;
 }
 
 body {
@@ -66,6 +66,9 @@ h5 {
     margin-bottom: 60px;
 }
 
+a {
+    color: white;
+}
 
 /* Focus sur les input dans bootstrap */
 
@@ -96,7 +99,7 @@ input[type="color"]:focus,
 */
 
 .footer {
-    background-color: #5bb672;
+    background-color: #60b174;
 }
 
 i {

@@ -1,9 +1,10 @@
 // Var
 var express = require('express');
 var router = express.Router();
+var OfferModel = require('../models').Offer;
 
 // Routes
-router.get('/cities/:city', function(req, res) {
+router.get('/:city', function(req, res) {
     var city = req.params.city
         // console.log(city);
 

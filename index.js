@@ -22,7 +22,7 @@ app.use(express.static("public"));
 
 // Optimisation des routes en externe
 var citiesRoute = require("./routes/cities");
-app.use("/citites", citiesRoute);
+app.use("/cities", citiesRoute);
 
 // Initialisation express-vaidator
 var check = expValChecker.check; // get references to the 2 validation functions
@@ -131,86 +131,86 @@ app.get("/signup", function(req, res) {
 
 app.post('/signup',
     //Check validator username + password
-    check("username").isEmail(), 
-    check("password").isLength({ min: 6 }), 
+    check("username").isEmail(),
+    check("password").isLength({ min: 6 }),
     function(req, res) {
-        var errors = validationResult(req); 
+        var errors = validationResult(req);
         if (errors.isEmpty() === false) {
             // console.log(errors.array()[0].msg)
-            res.render('signup',{
+            res.render('signup', {
                 errors: errors.array()[0].msg // to be used in a json loop
             });
             return;
         }
-    // create a user with the defined model with
-    // req.body.username, req.body.password
+        // create a user with the defined model with
+        // req.body.username, req.body.password
 
-    // WITHOUT PASSPORT
+        // WITHOUT PASSPORT
 
-    // var username = req.body.username;
-    // var password = req.body.password;
+        // var username = req.body.username;
+        // var password = req.body.password;
 
-    // User.findOne({username: username}, function(user) {
-    //   if (user === null) {
-    //     var newUser = new User({
-    //       username: username,
-    //       password: password,
-    //     });
-    //     newUser.save(function(err, obj) {
-    //       if (err) {
-    //         console.log('/signup user save err', err);
-    //         res.render('500');
-    //       } else {
-    //         // Save a collection session with a token session and
-    //         // a session cookie in the browser
-    //       }
-    //     });
-    //   }
-    // });
+        // User.findOne({username: username}, function(user) {
+        //   if (user === null) {
+        //     var newUser = new User({
+        //       username: username,
+        //       password: password,
+        //     });
+        //     newUser.save(function(err, obj) {
+        //       if (err) {
+        //         console.log('/signup user save err', err);
+        //         res.render('500');
+        //       } else {
+        //         // Save a collection session with a token session and
+        //         // a session cookie in the browser
+        //       }
+        //     });
+        //   }
+        // });
 
-    // console.log("will signup");
+        // console.log("will signup");
 
-    var username = req.body.username;
-    var password = req.body.password;
-    var passwordConf = req.body.passwordConf;
-    var firstName = req.body.firstName;
-    var surName = req.body.surName;
-    var dateOfBirth = req.body.dateOfBirth;
-    // console.log('username :', username)
-    // console.log('password :', password)
-    // console.log('passwordConf:', passwordConf)
-    // console.log('firstName :', firstName)
-    // console.log('surName :', surName)
-    // console.log('dateOfBirth :', dateOfBirth)
+        var username = req.body.username;
+        var password = req.body.password;
+        var passwordConf = req.body.passwordConf;
+        var firstName = req.body.firstName;
+        var surName = req.body.surName;
+        var dateOfBirth = req.body.dateOfBirth;
+        // console.log('username :', username)
+        // console.log('password :', password)
+        // console.log('passwordConf:', passwordConf)
+        // console.log('firstName :', firstName)
+        // console.log('surName :', surName)
+        // console.log('dateOfBirth :', dateOfBirth)
 
-    if (password === passwordConf) {
-        // console.log("OK. Passwords match !")
-    } else {
-        // console.log("Nope ! Passwords don't match !")
-    }
-
-    User.register(
-        new User({
-            username: username,
-            firstName: firstName,
-            surName: surName,
-            dateOfBirth: dateOfBirth,
-
-            // other fields can be added here
-        }),
-        password, // password will be hashed
-        function(err, user) {
-            if (err) {
-                console.log("/signup user register err", err);
-                return res.render("register");
-            } else {
-                passport.authenticate("local")(req, res, function() {
-                    res.redirect("/admin");
-                });
-            }
+        if (password === passwordConf) {
+            // console.log("OK. Passwords match !")
+        } else {
+            // console.log("Nope ! Passwords don't match !")
         }
-    );
-});
+
+        User.register(
+            new User({
+                username: username,
+                firstName: firstName,
+                surName: surName,
+                dateOfBirth: dateOfBirth,
+
+                // other fields can be added here
+            }),
+            password, // password will be hashed
+            function(err, user) {
+                if (err) {
+                    console.log("/signup user register err", err);
+                    return res.render("register");
+                } else {
+                    passport.authenticate("local")(req, res, function() {
+                        res.redirect("/admin");
+                    });
+                }
+            }
+        );
+    });
 
 app.get("/login", function(req, res) {
     if (req.isAuthenticated()) {
@@ -259,29 +259,34 @@ app.post('/upload', upload.single('image'), function(req, res) {
     // console.log(req.body.surName);
 
     // On rename la photo dans le upload
-    var pictureName = "public/uploads/" + req.body.firstName + ".jpg";
+    var pictureName = "public/uploads/" + req.file.filename + ".jpg";
     // console.log('public-picture', pictureName)
     fs.rename(req.file.path, pictureName, function(err) {
         if (err) {
             console.log("il y a une erreur", err)
         }
-        var newOffer = new OfferModel({
-            title: req.body.title,
-            description: req.body.description,
-            city: req.body.city,
-            firstName: req.body.firstName,
-            price: req.body.price,
-            images: "/uploads/" + req.body._id + ".jpg",
-        });
+        OfferModel.countDocuments(function(err, count) {
+            console.log('Number of offers offers :', count);
+            var newOffer = new OfferModel({
+                title: req.body.title,
+                description: req.body.description,
+                city: req.body.city,
+                firstName: req.body.firstName,
+                price: req.body.price,
+                id: 1433 + count + 1,
+                images: "/uploads/" + req.file.filename + ".jpg",
+            });
+            console.log(newOffer.id)
 
-        // Save the user in the database
-        newOffer.save(function(err, offer) {
-            if (err) {
-                res.send("Il y a eu une erreur, veuillez recommencer")
-            }
-            var successMess = req.body.firstName + " , your offer has been saved !";
-            res.render("offer-posted", {
-                successMess: successMess
+            // Save the user in the database
+            newOffer.save(function(err, offer) {
+                if (err) {
+                    res.send("Il y a eu une erreur, veuillez recommencer")
+                }
+                var successMess = req.body.firstName + " , your offer has been saved !";
+                res.render("offer-posted", {
+                    successMess: successMess
+                });
             });
         });
     });
